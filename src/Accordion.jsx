@@ -6,6 +6,7 @@ export default function Accordion({data}) {
   const [multiEnabled, setMultiEnabled] = useState(false);
 
   function handleClick(panel){
+    console.log('panelClicked', panel)
     if(!multiEnabled){
      setPanels(panels.map(indivPanel => indivPanel.id=== panel.id? {...indivPanel, open: !indivPanel.open} : {...indivPanel, open:false}))
     }
@@ -14,10 +15,10 @@ export default function Accordion({data}) {
     }
 
   }
-  console.log(panels);
+  // console.log(panels);
   
   return (
-    <div className='w-[40%]'>
+    <div className='w-full'>
       <label htmlFor="myCheck">
         Allow MultiSelect {'  '}
         <input
