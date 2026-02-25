@@ -1,11 +1,12 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import Panel from "./Panel";
+import React from "react";
 
-export default function Accordion({data}) {
+const Accordion = React.memo(({data}) => {
   const [panels, setPanels] = useState(() =>data.map(item => ({...item, open: false})));
   const [multiEnabled, setMultiEnabled] = useState(false);
 
-  function handleClick(panel){
+  const handleClick = (panel) => {
     console.log('panelClicked', panel)
     if(!multiEnabled){
      setPanels(panels.map(indivPanel => indivPanel.id=== panel.id? {...indivPanel, open: !indivPanel.open} : {...indivPanel, open:false}))
@@ -13,9 +14,8 @@ export default function Accordion({data}) {
     else{
       setPanels(panels.map(indivPanel => indivPanel.id === panel.id? {...indivPanel, open: !indivPanel.open}: indivPanel))
     }
+  };
 
-  }
-  // console.log(panels);
   
   return (
     <div className='w-full'>
@@ -27,21 +27,20 @@ export default function Accordion({data}) {
           id="myCheck"
           checked={multiEnabled}
           onChange={()=> setMultiEnabled(multiEnabled => !multiEnabled) }
-        />
+         />
       </label>
       <ul >
-        {panels.length > 0 ? (
-    panels.map((panel) => (
+     { panels.map((panel) => (
       <Panel
         key={panel.id}
         panel={panel}
         handleClick={handleClick}
-      />
-    ))
-  ) : (
-    <li className="text-gray-500 italic">Loading Panels</li>
-  )}
+        />
+      ))}
       </ul>
+
     </div>
-  );
-}
+  )
+});
+
+export default Accordion;
