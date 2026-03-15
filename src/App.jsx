@@ -7,8 +7,20 @@ import NewNav from './Practice/NewNav.jsx';
 import { UserProvider } from './Practice/useUser.jsx'
 import { BrowserRouter } from 'react-router-dom'
 import Rooms from './Practice/Rooms.tsx'
-import { useEffect, useRef, useState, useMemo } from 'react';
+import { useEffect, useRef, useState, useMemo, use } from 'react';
 import { LoginModal } from './Practice/auth/components/LoginModal.jsx';
+import {Score} from './Practice/Score.jsx'
+import HeroForm from './Practice/HeroForm.jsx'
+
+function OneSecUpdate(){
+  const [count, setCount] = useState(0);
+  useEffect(()=>{
+    setInterval(()=> {
+      console.log("count: " , count);
+      setCount(count+1)},1000)
+  }, [])
+  return <p className='text-[16px]'>Count: {count}</p>
+}
 
 function App() {
   const items = useMemo(() => (
@@ -40,13 +52,16 @@ function App() {
     ]
   ), [])
 
-  const [count, setCount] = useState(0);
+  
 
 
   const [showLoginModal, setShowLoginModal] = useState(false);
   const loginModalRef = useRef();
+
+  //adding listener via useEffect to handleOutsideClick when loginModal is open
   useEffect(() => {
     const handleOutsideClick = (e) => {
+      console.log('handleOutsideClick called; showLoginModal ', showLoginModal)
       if (showLoginModal && loginModalRef.current) {
         const rect = loginModalRef.current.getBoundingClientRect();
         if (e.clientY < rect.top || e.clientY > rect.bottom || e.clientX < rect.left || e.clientX > rect.right) {
@@ -54,12 +69,12 @@ function App() {
         }
       }
     };
-
-    document.addEventListener('click', handleOutsideClick);
+  if(showLoginModal) document.addEventListener('click', handleOutsideClick);
     return () => document.removeEventListener('click', handleOutsideClick);
   }, [showLoginModal]);
 
-  function onLoginBtnClick() {
+  function onLoginBtnClick(e) {
+    e.stopPropagation();
     setShowLoginModal(true);
   }
   function closeLoginModal() {
@@ -69,15 +84,19 @@ function App() {
     <>
       <BrowserRouter>
         <UserProvider>
-          {/* <NewNav onLoginBtnClick={onLoginBtnClick} ></NewNav>
- {showLoginModal && 
-  <LoginModal ref={loginModalRef} onClose={closeLoginModal} />}
-  <Rooms></Rooms> */}
-          <div className='border'>
+          <NewNav onLoginBtnClick={onLoginBtnClick} ></NewNav>
+          {/* <OneSecUpdate></OneSecUpdate> */}
+ {
+  <LoginModal showLoginModal={showLoginModal}
+    ref={loginModalRef} onClose={closeLoginModal} />}
+    {/* <HeroForm></HeroForm> */}
+    {/* <Score></Score> */}
+  {/* <Rooms></Rooms> */}
+          {/* <div className='border'>
             <p>Count: {count} </p>
             <button onClick={() => setCount(c => c + 1)}>+1</button>
           </div>
-          <Accordion data={items}></Accordion>
+          <Accordion data={items}></Accordion> */}
         </UserProvider>
       </BrowserRouter>
 
